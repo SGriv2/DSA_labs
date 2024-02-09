@@ -2,8 +2,10 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-void merge(int arr[], int left, int right, int mid);
-void print_array(int arr[], int length);
+#define TYPE long int
+
+void merge(TYPE arr[], int left, int right, int mid);
+void print_array(TYPE arr[], long int length);
 
 int getrand(int min, int max)
 {
@@ -17,7 +19,7 @@ double wtime()
     return (double)t.tv_sec + (double)t.tv_usec * 1E-6;
 }
 
-void merge_sort(int arr[], int left, int right)
+void merge_sort(TYPE arr[], int left, int right)
 {
     if (left < right)
     {
@@ -30,24 +32,24 @@ void merge_sort(int arr[], int left, int right)
     }
 }
 
-void merge(int arr[], int left, int right, int mid)
+void merge(TYPE arr[], int left, int right, int mid)
 {
     int size_left = mid - left + 1;
     int size_right = right - mid;
     int arrL[size_left];
     int arrR[size_right];
-    for (int i = 0; i < size_left; i++)
+    for (TYPE i = 0; i < size_left; i++)
     {
         arrL[i] = arr[left + i];
     }
 
-    for (int j = 0; j < size_right; j++)
+    for (TYPE j = 0; j < size_right; j++)
     {
         arrR[j] = arr[mid + 1 + j];
     }
-    int k = left;
-    int l = 0;
-    int r = 0;
+    TYPE k = left;
+    TYPE l = 0;
+    TYPE r = 0;
     while (l < size_left && r < size_right)
     {
         if (arrL[l] <= arrR[r])
@@ -76,20 +78,20 @@ void merge(int arr[], int left, int right, int mid)
     }
 }
 
-void print_array(int arr[], int length)
+void print_array(TYPE arr[], TYPE length)
 {
     for (int i = 0; i < length; i++)
     {
-        printf("%d ", arr[i]);
+        printf("%ld ", arr[i]);
     }
     printf("\n");
 }
 
 int main()
 {
-    int n = 950000;
-    int array[n];
-    for (int i = 0; i < n; i++)
+    TYPE n = 10000000;
+    TYPE array[n];
+    for (TYPE i = 0; i < n; i++)
     {
         array[i] = getrand(1, 100000);
     }
