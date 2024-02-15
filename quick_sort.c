@@ -62,14 +62,13 @@ void printArray(int arr[], int size)
 
 int main()
 {
-    int n = 1000000;
-    int array1[n];
+    int n = 50000;
+    int array[n];
+    double t = wtime();
     for (int i = 0; i < n; i++)
     {
-        array1[i] = getrand(1, 1000000);
+        array[i] = getrand(1, 1000000);
     }
-
-    double t = wtime();
 
     t = wtime() - t;
     printf("Elapsed time: %.16f sec.\n", t);

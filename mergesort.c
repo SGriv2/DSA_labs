@@ -89,8 +89,9 @@ void print_array(TYPE arr[], TYPE length)
 
 int main()
 {
-    TYPE n = 10000000;
+    TYPE n = 250000;
     TYPE array[n];
+    double t = wtime();
     for (TYPE i = 0; i < n; i++)
     {
         array[i] = getrand(1, 100000);
@@ -99,10 +100,9 @@ int main()
 
     merge_sort(array, 0, size - 1);
 
-    double t = wtime();
-
     t = wtime() - t;
-    printf("Elapsed time: %.16f sec.\n", t);
+    print_array(array, n);
+    printf("Elapsed time: %.6f sec.\n", t);
 
     return 0;
 }
