@@ -4,8 +4,8 @@
 
 #define TYPE long int
 
-void merge(TYPE arr[], int left, int right, int mid);
-void print_array(TYPE arr[], long int length);
+void merge(int *arr, int left, int right, int mid);
+void print_array(int **arr, long int length);
 
 int getrand(int min, int max)
 {
@@ -32,15 +32,15 @@ void merge_sort(TYPE arr[], int left, int right)
     }
 }
 
-void merge(TYPE arr[], int left, int right, int mid)
+void merge(int *arr, int left, int right, int mid)
 {
     int size_left = mid - left + 1;
     int size_right = right - mid;
-    int arrL[size_left];
-    int arrR[size_right];
+    int *arrL = malloc(size_left * sizeof(int));
+    int *arrR = malloc(size_right * sizeof(int));
     for (TYPE i = 0; i < size_left; i++)
     {
-        arrL[i] = arr[left + i];
+        (*arrL)[i] = (*arr)[left + i];
     }
 
     for (TYPE j = 0; j < size_right; j++)
@@ -78,11 +78,11 @@ void merge(TYPE arr[], int left, int right, int mid)
     }
 }
 
-void print_array(TYPE arr[], TYPE length)
+void print_array(int **arr, TYPE length)
 {
     for (int i = 0; i < length; i++)
     {
-        printf("%ld ", arr[i]);
+        printf("%ld ", (*arr)[i]);
     }
     printf("\n");
 }
@@ -90,7 +90,7 @@ void print_array(TYPE arr[], TYPE length)
 int main()
 {
     TYPE n = 250000;
-    TYPE array[n];
+    int *array = malloc(n * sizeof(int));
     double t = wtime();
     for (TYPE i = 0; i < n; i++)
     {
@@ -98,11 +98,12 @@ int main()
     }
     int size = sizeof(array) / sizeof(array[0]);
 
-    merge_sort(array, 0, size - 1);
+    merge_sort(&array, 0, size - 1);
 
     t = wtime() - t;
     print_array(array, n);
     printf("Elapsed time: %.6f sec.\n", t);
+    free(array);
 
     return 0;
 }
