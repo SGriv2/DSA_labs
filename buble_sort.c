@@ -20,46 +20,20 @@ void random_el(uint32_t *arr, unsigned int n)
     }
 }
 
-void Quick_sort(uint32_t *arr, int low, int high)
+void swap(uint32_t *arr, int i, int j)
 {
-    int i = low;
-    int j = high;
-    int pivot = arr[(low + high) / 2];
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
 
-    do
-    {
-        while (arr[i] < pivot)
-        {
-            i++;
-        }
-        while (arr[j] > pivot)
-        {
-            j--;
-        }
-        if (i <= j)
-        {
-            if (arr[i] > arr[j])
-            {
-                int tmp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = tmp;
-            }
-            i++;
-            if (j > 0)
-            {
-                j--;
-            }
-        }
-    } while (i <= j);
-
-    if (i < high)
-    {
-        Quick_sort(arr, i, high);
-    }
-    if (j > low)
-    {
-        Quick_sort(arr, low, j);
-    }
+void bubbleSort(uint32_t *arr, int n)
+{
+    int i, j;
+    for (i = 0; i < n - 1; i++)
+        for (j = 0; j < n - i - 1; j++)
+            if (arr[j] > arr[j + 1])
+                swap(arr, j, j + 1);
 }
 
 void printArray(uint32_t arr[], int size)
@@ -78,7 +52,7 @@ int main()
     uint32_t *arr;
     arr = (uint32_t *)malloc(n * sizeof(int));
     random_el(arr, n);
-    Quick_sort(arr, 0, n - 1);
+    bubbleSort(arr, n);
     printArray(arr, n);
     printf("\n");
     printf("Время сортировки %d элементов: %.2f\n", n, wtime() - start_time);

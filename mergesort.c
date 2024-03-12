@@ -1,16 +1,11 @@
 #include <stdio.h>
-#include <sys/time.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <time.h>
+#include <stdint.h>
 
-#define TYPE long int
-
-void merge(int *arr, int left, int right, int mid);
-void print_array(int **arr, long int length);
-
-int getrand(int min, int max)
-{
-    return (double)rand() / (RAND_MAX + 1.0) * (max - min) + min;
-}
+void merge(uint32_t arr[], int left, int right, int mid);
+void print_array(uint32_t arr[], int length);
 
 double wtime()
 {
@@ -19,91 +14,95 @@ double wtime()
     return (double)t.tv_sec + (double)t.tv_usec * 1E-6;
 }
 
-void merge_sort(TYPE arr[], int left, int right)
+void random_el(uint32_t *arr, unsigned int n)
 {
-    if (left < right)
+    srand(time(NULL));
+    for (int i = 0; i < n; i++)
     {
-        int mid = left + (right - left) / 2;
-
-        merge_sort(arr, left, mid);
-        merge_sort(arr, mid + 1, right);
-
-        merge(arr, left, right, mid);
+        arr[i] = rand() % 100000;
     }
 }
 
-void merge(int *arr, int left, int right, int mid)
+void merge_sort(uint32_t *arr, int l, int r)
 {
-    int size_left = mid - left + 1;
-    int size_right = right - mid;
-    int *arrL = malloc(size_left * sizeof(int));
-    int *arrR = malloc(size_right * sizeof(int));
-    for (TYPE i = 0; i < size_left; i++)
+    if (l < r)
     {
-        (*arrL)[i] = (*arr)[left + i];
-    }
 
-    for (TYPE j = 0; j < size_right; j++)
-    {
-        arrR[j] = arr[mid + 1 + j];
+        int m = l + (r - l) / 2;
+
+        merge_sort(arr, l, m);
+        merge_sort(arr, m + 1, r);
+
+        merge(arr, l, m, r);
     }
-    TYPE k = left;
-    TYPE l = 0;
-    TYPE r = 0;
-    while (l < size_left && r < size_right)
+}
+
+void merge(uint32_t *arr, int l, int m, int r)
+{
+    int i, j, k;
+    unsigned int n1 = m - l + 1;
+    unsigned int n2 = r - m;
+    uint32_t *L = (uint32_t *)malloc(n1 * sizeof(int));
+    uint32_t *R = (uint32_t *)malloc(n2 * sizeof(int));
+
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2)
     {
-        if (arrL[l] <= arrR[r])
+        if (L[i] <= R[j])
         {
-            arr[k] = arrL[l];
-            l++;
+            arr[k] = L[i];
+            i++;
         }
         else
         {
-            arr[k] = arrR[r];
-            r++;
+            arr[k] = R[j];
+            j++;
         }
         k++;
     }
-    while (l < size_left)
+
+    while (i < n1)
     {
-        arr[k] = arrL[l];
-        l++;
+        arr[k] = L[i];
+        i++;
         k++;
     }
-    while (r < size_right)
+    while (j < n2)
     {
-        arr[k] = arrR[r];
-        r++;
+        arr[k] = R[j];
+        j++;
         k++;
     }
 }
 
-void print_array(int **arr, TYPE length)
+void print_array(uint32_t arr[], int length)
 {
     for (int i = 0; i < length; i++)
     {
-        printf("%ld ", (*arr)[i]);
+        printf("%d ", arr[i]);
     }
     printf("\n");
 }
 
 int main()
 {
-    TYPE n = 250000;
-    int *array = malloc(n * sizeof(int));
-    double t = wtime();
-    for (TYPE i = 0; i < n; i++)
-    {
-        array[i] = getrand(1, 100000);
-    }
-    int size = sizeof(array) / sizeof(array[0]);
+    double start_time = wtime();
+    unsigned int n = 100000;
+    uint32_t *array;
+    array = (uint32_t *)malloc(n * sizeof(int));
+    random_el(array, n);
 
-    merge_sort(&array, 0, size - 1);
+    merge_sort(array, 0, n - 1);
 
-    t = wtime() - t;
     print_array(array, n);
-    printf("Elapsed time: %.6f sec.\n", t);
-    free(array);
+    printf("Время сортировки %d элементов: %.2f\n", n, wtime() - start_time);
 
     return 0;
 }
