@@ -62,15 +62,6 @@ void Quick_sort(uint32_t *arr, int low, int high)
     }
 }
 
-void printArray(uint32_t arr[], int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
-}
-
 int main()
 {
     for (int i = 0; i <= 20; i++)

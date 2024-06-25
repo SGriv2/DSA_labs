@@ -38,7 +38,7 @@ void Insertion_sort(uint32_t *arr, unsigned int n)
 
 int main()
 {
-    for (int i = 17; i <= 20; i++)
+    for (int i = 0; i <= 20; i++)
     {
         unsigned int n = i * 50000;
         uint32_t *arr;
