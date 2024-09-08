@@ -1,11 +1,11 @@
 {
 	//Main editor settings
 	"window.openFilesInNewWindow": "off",
-	"editor.tabSize": 2,
+	"editor.tabSize": 4,
 	"editor.folding": false,
 	"editor.insertSpaces": false,
 	"editor.smoothScrolling": true,
-	"editor.minimap.enabled": false,
+	"editor.minimap.enabled": true,
 	"editor.detectIndentation": true,
 	"editor.suggestSelection": "first",
 	"editor.multiCursorModifier": "ctrlCmd",
@@ -224,5 +224,9 @@
 	// Поведение при обнаружении нескольких определений
 	"editor.gotoLocation.multipleDefinitions": "goto",
 	// Скрыть подсказку в пустом редакторе
-	"workbench.editor.empty.hint": "hidden"
+	"workbench.editor.empty.hint": "hidden",
+	"files.associations": {
+		".fantomasignore": "ignore",
+		"algorithm": "cpp"
+	}
 }
