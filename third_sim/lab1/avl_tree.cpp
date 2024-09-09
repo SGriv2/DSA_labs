@@ -1,29 +1,24 @@
 #include <iostream>
+#include "avl_tree.hpp"
 
-typedef struct avltree{
-	int key;
-	char *value;
-	bool isDeleted;
-
-	int height;
-	avltree *left;
-	avltree *right;
-}avltree;
-
-class AVLTree {
+class AVLTree { 
 public:
 	AVLTree() : root(nullptr) {}
 
-	void avltree_add(int key, char *value){
+	void add(int key, char *value){
 		root = avltree_add(root, key, value);
 	}
 
-	void avltree_print_dfs(int level) {
+	void print(int level) {
         avltree_print_dfs(root, level);
     }
 
-	void avltree_lazy_delete(int key) {
-		root = avltree_lazy_delete(root, key);
+	void lazy_delete(int key) {
+		root = avltree_lazy_deletion(root, key);
+	}
+
+	void clear() {
+		root = avltree_free(root);
 	}
 
 
@@ -31,13 +26,15 @@ private:
     avltree* root;
 
 	void avltree_print_dfs(struct avltree *root, int level) {
-		if (root == nullptr)
+		if (root == nullptr) {
             return;
+        }
 
         avltree_print_dfs(root->left, level + 1);
-        for (int i = 0; i < level; i++)
-            std::cout << "    ";
-        std::cout << root->key << " - " << root->value << "\n";
+        for (int i = 0; i < level; i++) {
+            std::cout << "  ";
+        }
+        std::cout << root->key << ": " << root->value << std::endl;
         avltree_print_dfs(root->right, level + 1);
 	}
 
@@ -150,44 +147,55 @@ private:
         return root;
 	}
 
-	avltree* avltree_lazy_delete(avltree* root, int key) {
-		if (root == nullptr) {
-            return root;
-        }
+	avltree* avltree_lazy_deletion(avltree* root, int key) {
+		if (!root) return nullptr;
 
-        if (key < root->key) {
-            root->left = avltree_lazy_delete(root->left, key);
-        } else if (key > root->key) {
-            root->right = avltree_lazy_delete(root->right, key);
-        } else {
-            if (root->isDeleted) {
-                return root;
-            }
-            root->isDeleted = true;
-            return root;
-        }
-
-        if (root == nullptr) {
-            return root;
-        }
-
-        root->height = imax2(avltree_height(root->left), avltree_height(root->right));
-		int balance = avltree_balance(root);
-		if (balance > 1) {
-			if (avltree_balance(root->left) >= 0) {
-                root = avltree_right_rotate(root);
-            } else {
-                root->left = avltree_left_rotate(root->left);
-                root = avltree_right_rotate(root);
-            }
-        } else if (balance < -1) {
-			if (avltree_balance(root->right) <= 0) {
-				root = avltree_left_rotate(root);
-            } else {
-                root->right = avltree_right_rotate(root->right);
-                root = avltree_left_rotate(root);
-            }
-        }
-        return root;
+		if (key < root->key) {
+			root->left = avltree_lazy_deletion(root->left, key);
+		} else if (key > root->key) {
+			root->right = avltree_lazy_deletion(root->right, key);
+		} else {
+			root->isDeleted = true;
+		}
+		return root;
 	}
+
+
+	avltree* avltree_free(avltree* node) {
+        if (!node) return nullptr;
+        node->left = avltree_free(node->left);
+        node->right = avltree_free(node->right);
+        
+        // Проверим, если узел помечен как удаленный и неим еет детей
+        if (node->isDeleted && !node->left && !node->right) {
+            delete node;
+            return nullptr;
+        }
+        return node;
+    }
 };
+
+int main() {
+	AVLTree tree;
+
+	
+
+	tree.add(1, "asd");
+	tree.add(2, "vdf");
+	tree.add(3, "zxc");
+	tree.add(4, "ggf");
+	tree.add(5, "zxv");
+
+	tree.print(0);
+
+	tree.lazy_delete(5);
+
+	tree.clear();
+
+	std::cout << "--------------------------------" << "\n"; 
+
+	tree.print(0);
+
+
+	return 0;
+}
