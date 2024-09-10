@@ -227,6 +227,7 @@
 	"workbench.editor.empty.hint": "hidden",
 	"files.associations": {
 		".fantomasignore": "ignore",
-		"algorithm": "cpp"
+		"algorithm": "cpp",
+		"string": "cpp"
 	}
 }
