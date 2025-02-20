@@ -1,261 +1,250 @@
 #include <iostream>
-#include "avl_tree.hpp"
+#include "lab1/var2/avl_tree.hpp"
 
-class AVLTree { 
-public:
-	AVLTree() : root(nullptr) {}
+using namespace std;
 
-	void add(int key, char *value){
-		root = avltree_add(root, key, value);
-	}
+// Структура узла АВЛ дерева
 
-	void print(int level) {
-        avltree_print(root, level);
+
+// Функция для вычисления высоты узла
+int height(AVLNode* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return node->height;
+}
+
+// Функция для вычисления балансировочного фактора
+int balanceFactor(AVLNode* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return height(node->left) - height(node->right);
+}
+
+// Функция для обновления высоты узла
+void updateHeight(AVLNode* node) {
+    node->height = 1 + max(height(node->left), height(node->right));
+}
+
+// Функция для левого поворота
+AVLNode* leftRotate(AVLNode* y) {
+    AVLNode* x = y->right;
+    AVLNode* T2 = x->left;
+
+    // Выполняем поворот
+    x->left = y;
+    y->right = T2;
+
+    // Обновляем высоты
+    updateHeight(y);
+    updateHeight(x);
+
+    // Возвращаем новый корень
+    return x;
+}
+
+// Функция для правого поворота
+AVLNode* rightRotate(AVLNode* x) {
+    AVLNode* y = x->left;
+    AVLNode* T2 = y->right;
+
+    // Выполняем поворот
+    y->right = x;
+    x->left = T2;
+
+    // Обновляем высоты
+    updateHeight(x);
+    updateHeight(y);
+
+    // Возвращаем новый корень
+    return y;
+}
+
+// Функция для вставки узла в АВЛ дерево
+AVLNode* insert(AVLNode* node, int key) {
+    // Базовый случай: дерево пустое
+    if (node == nullptr) {
+        return new AVLNode(key);
     }
 
-	void lazy_delete(int key) {
-		root = avltree_lazy_deletion(root, key);
-	}
-
-	avltree* get() {
-		return root;
-	}
-
-
-private:
-    avltree* root;
-
-	void avltree_print(struct avltree *root, int level) {
-		int i;
-
-		if (root == nullptr) {
-			return;
-		}
-		std::cout << "   ";
-		for (i = 0; i < level; i++) {
-			std::cout << "   ";
-		}
-		std::cout << root->key << ":" << root->value << std::endl;
-
-		avltree_print(root->left, level + 1);
-		avltree_print(root->right, level + 1);
-	}
-
-	int imax2(int i, int j) {
-		return (i > j)? i : j;
-	}
-
-	avltree* avltree_add(avltree* root, int key, char *value) {
-
-		if (root == nullptr) {
-			return avltree_create(key, value);
-		}
-		
-		if (key < root -> key) {
-			root -> left = avltree_add(root->left, key, value);
-			if (avltree_height(root->left) - avltree_height(root->right) == 2) {
-				if (key < root->left->key) {
-                    root = avltree_right_rotate(root);
-                } else {
-                    root = avltree_leftright(root);
-                }
-			}
-		}
-
-		else if (key > root -> key) {
-			root->right = avltree_add(root->right, key, value);
-			if (avltree_height(root->right) - avltree_height(root->left) == 2) {
-				if (key > root->right->key) {
-                    root = avltree_left_rotate(root);
-                } else {
-                    root = avltree_rightleft(root);
-                }
-			}
-		}
-
-		root->height = imax2(avltree_height(root->left), avltree_height(root->right)) + 1;
-
-		return root;
-	}
-
-	avltree* avltree_create(int key, char *value) { 
-		avltree* node;
-
-		node = new avltree;
-		if (node != nullptr) {
-			node -> key = key;
-            node -> value = value;
-            node -> isDeleted = false;
-            node -> height = 0;
-            node -> left = nullptr;
-            node -> right = nullptr;
-		}
-		return node;
-	}
-
-	int avltree_height(avltree* node) {
-		return (node != nullptr) ? node->height : -1;
-	}
-
-	int avltree_balance(avltree* node) {
-		return avltree_height(node->left) - avltree_height(node->right);
-	}
-
-	avltree* avltree_right_rotate(avltree* node) {
-		avltree* left;
-
-		left = node->left;
-		node->left = left->right;
-		left->right = node;
-
-		node->height = imax2(avltree_height(node->left), avltree_height(node->right)) + 1;
-		left->height = imax2(avltree_height(left->left), node->height) + 1;
-
-		return left;
-	}
-
-	avltree* avltree_left_rotate(avltree* node) {
-		avltree* right;
-
-		right = node->right;
-		node->right = right->left;
-		right->left = node;
-
-		node->height = imax2(avltree_height(node->left), avltree_height(node->right)) + 1;
-		right->height = imax2(avltree_height(right->right), node->height) + 1;
-		return right;
-	}
-
-	avltree* avltree_leftright(avltree* node) {
-        node->left = avltree_left_rotate(node->left);
-        return avltree_right_rotate(node);
-    }
-
-	avltree* avltree_rightleft(avltree* node) {
-		node->right = avltree_right_rotate(node->right);
-        return avltree_left_rotate(node);
-    }
-
-	avltree* avltree_min(avltree* root) {
-		while (root->left!= nullptr) {
-            root = root->left;
+    // Рекурсивная вставка в левое или правое поддерево
+    if (key < node->key) {
+        node->left = insert(node->left, key);
+    } else if (key > node->key) {
+        node->right = insert(node->right, key);
+    } else {
+        // Ключ уже существует, проверяем флаг deleted
+        if (node->deleted) {
+            node->deleted = false; // Отменяем удаление
         }
+        return node;
+    }
+
+    // Обновляем высоту текущего узла
+    updateHeight(node);
+
+    // Проверяем балансировочный фактор
+    int balance = balanceFactor(node);
+
+    // Левый-левый случай
+    if (balance > 1 && key < node->left->key) {
+        return rightRotate(node);
+    }
+
+    // Правый-правый случай
+    if (balance < -1 && key > node->right->key) {
+        return leftRotate(node);
+    }
+
+    // Левый-правый случай
+    if (balance > 1 && key > node->left->key) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Правый-левый случай
+    if (balance < -1 && key < node->right->key) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    // Дерево сбалансировано
+    return node;
+}
+
+// Функция для ленивого удаления узла из АВЛ дерева
+AVLNode* lazyDelete(AVLNode* node, int key) {
+    // Находим узел для удаления
+    AVLNode* nodeToDelete = findNode(node, key);
+
+    // Если узел не найден, ничего не делаем
+    if (nodeToDelete == nullptr) {
+        return node;
+    }
+
+    // Устанавливаем флаг deleted = 1
+    nodeToDelete->deleted = true;
+
+    return node;
+}
+
+// Функция для поиска узла с заданным ключом
+AVLNode* findNode(AVLNode* node, int key) {
+    if (node == nullptr || node->key == key) {
+        return node;
+    }
+
+    if (key < node->key) {
+        return findNode(node->left, key);
+    } else {
+        return findNode(node->right, key);
+    }
+}
+
+// Функция для подсчета количества удаленных узлов
+int countDeletedNodes(AVLNode* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return (node->deleted ? 1 : 0) + countDeletedNodes(node->left) + countDeletedNodes(node->right);
+}
+
+// Функция для создания нового АВЛ дерева с неудалёнными узлами
+AVLNode* rebuildTree(AVLNode* root) {
+    // Подсчет количества удаленных узлов
+    int deletedCount = countDeletedNodes(root);
+
+    // Если нет удаленных узлов, ничего не делаем
+    if (deletedCount == 0) {
         return root;
-	}
+    }
 
-	avltree* avltree_max(avltree* root) {
-		while (root->right!= nullptr) {
-            root = root->right;
-        }
-        return root;
-	}
+    // Создание нового АВЛ дерева
+    AVLNode* newRoot = nullptr;
 
-	avltree* avltree_lazy_deletion(avltree* root, int key) {
-		if (root == nullptr) return nullptr;
-		else if (key < root->key) root->left = avltree_lazy_deletion(root->left, key);
-		else if (key > root->key) root->right = avltree_lazy_deletion(root->right, key);
-		else {
-			if (root->left == nullptr || root->right == nullptr) {
-				root = (root->left == nullptr) ? root->right : root->left;
-			} else {
-				avltree maxminLeft = *avltree_max(root->left);
-				root->key = maxminLeft.key;
-				root->value = maxminLeft.value;
-				root->right = avltree_lazy_deletion(root->right, maxminLeft.key);
-			}
-		}
-		if (root != nullptr) {
-			
-		}
-		return root;
-	}
+    // Обход дерева и вставка неудалённых узлов в новое дерево
+    inOrderTraversal(root, newRoot);
+    
 
-	// avltree* avltree_lazy_deletion(avltree* root, int key) {
-	// 	assert( node != nullptr );
+    return newRoot;
+}
 
-    // 	CAVLTreeNode *p;
+// Функция для обхода дерева в порядке возрастания ключей
+void inOrderTraversal(AVLNode* node, AVLNode* newRoot) {
+    if (node == nullptr) {
+        return;
+    }
 
-    // 	if (node->pair.first == key) {
+    inOrderTraversal(node->left, newRoot);
+    if (!node->deleted) {
+        newRoot = insert(newRoot, node->key);
+    }
+    inOrderTraversal(node->right, newRoot);
+}
 
-    //     	if (node->Left == nullptr || node->Right == nullptr) {
+// Функция для печати АВЛ дерева (для проверки)
+void printTree(AVLNode* root, int level = 0) {
+    if (root == nullptr) {
+        return;
+    }
 
-    //         	if (node->Left == nullptr) {
-
-    //             	p = node->Right;
-
-    //         	}
-
-    //         	else {
-
-    //         		p = node->Left;
-
-    //         	}
-
-    //         	delete node;
-    //         	return p;
-
-    //     	} else {
-
-    //         	for (p = node->Right; p->Left != nullptr; p = p->Left);
-    //         	node->pair.first = p->pair.first;
-    //         	node->pair.second = p->pair.second;
-    //         	node->Right = rem(node->Right, p->pair.first);
-    //         	fixupBalance(node);
-    //         	return node;
-
-    //     	}
-    // 	}
-
-    // 	if (key < node->pair.first) {
-
-    //     	node->Left = rem(node->Left, key);
-
-    // 	}
-
-    // 	else {
-
-    //     	node->Right = rem(node->Right, key);
-
-    // 	}
-
-    // 	fixupBalance(node);
-    // 	return node;
-	// }
-
-	
-
-
-	avltree* avltree_free(avltree* node)  {
-		if (node) {
-            avltree_free(node->left);
-            avltree_free(node->right);
-            delete node;
-        }
-		return nullptr;
-	}
-};
+    printTree(root->right, level + 1);
+    for (int i = 0; i < level; i++) {
+        cout << " ";
+    }
+    cout << root->key << " (" << balanceFactor(root) << ")";
+    if (root->deleted) {
+        cout << " [deleted]" << endl;
+    } else {
+        cout << endl;
+    }
+    printTree(root->left, level + 1);
+}
 
 int main() {
-	AVLTree tree;
+    AVLNode* root = nullptr;
+    int threshold = 3; // Пороговое значение для перестройки дерева
 
-	tree.add(10, "asd");
-	tree.add(9, "vdf");
-	tree.add(11, "zxc");
-	tree.add(12, "ggf");
-	tree.add(13, "zxv");
-	tree.add(8, "zxv");
-	tree.add(7, "zxv");
-	tree.add(6, "zxv");
-	tree.add(5, "zxv");
+    // Вставка узлов
+    root = insert(root, 10);
+    root = insert(root, 20);
+    root = insert(root, 30);
+    root = insert(root, 40);
+    root = insert(root, 50);
 
-	tree.print(0);
+    cout << "АВЛ дерево:" << endl;
+    printTree(root);
 
-	tree.lazy_delete(5);
-	tree.lazy_delete(10);
+    // Ленивое удаление
+    root = lazyDelete(root, 30);
 
-	std::cout << "--------------------------------" << "\n"; 
+    cout << "\nАВЛ дерево после ленивого удаления:" << endl;
+    printTree(root);
 
-	tree.print(0);
+    // Вставка узла с удаленным ключом
+    root = insert(root, 30);
 
-	return 0;
+    cout << "\nАВЛ дерево после вставки удаленного ключа:" << endl;
+    printTree(root);
+
+    // Ленивое удаление
+    root = lazyDelete(root, 40);
+    root = lazyDelete(root, 50);
+
+    cout << "\nАВЛ дерево после удаления двух узлов:" << endl;
+    printTree(root);
+
+    // Проверка количества удаленных узлов
+    int deletedCount = countDeletedNodes(root);
+    cout << "\nКоличество удаленных узлов: " << deletedCount << endl;
+
+    // Перестройка дерева
+    if (deletedCount >= threshold) {
+        root = rebuildTree(root);
+        cout << "\nАВЛ дерево после перестройки:" << endl;
+        printTree(root);
+    }
+
+    return 0;
 }

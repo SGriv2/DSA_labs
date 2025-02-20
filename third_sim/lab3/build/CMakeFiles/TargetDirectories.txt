@@ -1,0 +1,4 @@
+/home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/build/CMakeFiles/main.dir
+/home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/build/CMakeFiles/fib.dir
+/home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/build/CMakeFiles/edit_cache.dir
+/home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/build/CMakeFiles/rebuild_cache.dir

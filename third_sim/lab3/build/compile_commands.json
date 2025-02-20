@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/main.dir/main.cpp.o -c /home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/main.cpp",
+  "file": "/home/savelyy/second_sim/saod/DSA_labs/third_sim/lab3/main.cpp"
+}
+]

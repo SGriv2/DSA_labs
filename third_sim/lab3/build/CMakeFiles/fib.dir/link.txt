@@ -1,0 +1,2 @@
+/usr/bin/ar qc libfib.a 
+/usr/bin/ranlib libfib.a

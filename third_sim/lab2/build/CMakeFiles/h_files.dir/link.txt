@@ -1,0 +1,2 @@
+/usr/bin/ar qc libh_files.a 
+/usr/bin/ranlib libh_files.a

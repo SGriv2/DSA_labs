@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcpp_files.a CMakeFiles/cpp_files.dir/preftree.cpp.o CMakeFiles/cpp_files.dir/rbtree.cpp.o CMakeFiles/cpp_files.dir/hashtab.cpp.o
+/usr/bin/ranlib libcpp_files.a
